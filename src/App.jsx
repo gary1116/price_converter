@@ -142,7 +142,57 @@ function App() {
         )}
         {(market.fxError || market.metalsError.length > 0) && <div className="warning"><CircleHelp size={18} /><span>{market.fxError ? market.fxError + ' ' : ''}{market.metalsError.length ? `Quotes unavailable for: ${market.metalsError.join(', ')}. ` : ''}Other available prices remain usable. Click Refresh rates to retry.</span></div>}
         <section className="bottom-strip"><div className="strip-icon"><ShieldCheck size={22} /></div><div><strong>Know what you're looking at.</strong><p>FX is updated from official reference sources (typically daily). Commodity spot quotes update more frequently. Values are indicative, not executable retail quotes.</p></div><a href="https://frankfurter.dev" target="_blank" rel="noreferrer">Learn more <ArrowRight size={16} /></a></section>
-        <footer className="main-footer"><span>© {new Date().getFullYear()} Price Convert. Built with React.</span><span>Made for the curious. <span className="footer-heart">✦</span></span></footer>
+
+<footer className="main-footer developer-footer">
+  <div className="footer-left">
+    <span>
+      © {new Date().getFullYear()} Price Convert.
+      All rights reserved.
+    </span>
+
+    <span className="footer-credit">
+      Designed & Developed by{" "}
+      <a
+        href="https://garymeledath.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Gary Meledath
+      </a>
+      <span className="footer-heart"> ✦</span>
+    </span>
+  </div>
+
+  <div className="footer-links">
+    <a href="mailto:garymeledath234@gmail.com">
+      Email
+    </a>
+
+    <a
+      href="https://garymeledath.com"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Portfolio
+    </a>
+
+    <a
+      href="https://github.com/gary1116"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      GitHub
+    </a>
+
+    <a
+      href="https://www.linkedin.com/in/gary-m-100bb01aa/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      LinkedIn
+    </a>
+  </div>
+</footer>
       </div>
     </main>
   </div>;
