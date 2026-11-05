@@ -70,3 +70,51 @@ export function timeLabel(value) {
   const d = typeof value === 'number' ? new Date(value < 1e12 ? value * 1000 : value) : new Date(value);
   return Number.isNaN(d.getTime()) ? 'Recently updated' : d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
 }
+
+export async function getHistoricalRates(
+  fromCurrency,
+  toCurrency,
+  days = 30,
+  signal
+) {
+  const start = new Date();
+  start.setUTCDate(start.getUTCDate() - days);
+
+  const startDate = start.toISOString().split("T")[0];
+
+  if (fromCurrency === toCurrency) {
+    return [
+      { date: startDate, rate: 1 },
+      { date: new Date().toISOString().split("T")[0], rate: 1 }
+    ];
+  }
+
+  const params = new URLSearchParams({
+    from: startDate,
+    base: fromCurrency,
+    quotes: toCurrency
+  });
+
+  const response = await fetch(
+    `https://api.frankfurter.dev/v2/rates?${params}`,
+    { signal }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch historical rates");
+  }
+
+  const data = await response.json();
+
+  return data
+    .filter(
+      (item) =>
+        item.quote === toCurrency &&
+        Number.isFinite(item.rate)
+    )
+    .map((item) => ({
+      date: item.date,
+      rate: item.rate
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
