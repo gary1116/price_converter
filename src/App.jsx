@@ -3,6 +3,7 @@ import { ArrowDownUp, ArrowRight, BarChart3, Check, ChevronDown, CircleHelp, Coi
 import { FX_API, METALS, POPULAR, TROY_OUNCE_GRAMS, currencySymbol, formatNumber, getCurrencies, getMetalPrices, getUsdRates, metalValueUsd, timeLabel } from './api';
 import HistoricalChart from "./components/HistoricalChart";
 import useTheme from "./hooks/useTheme";
+import Stocks from './components/Stocks';
 
 const defaultCurrencyOptions = [
   ['USD', 'US Dollar'], ['INR', 'Indian Rupee'], ['EUR', 'Euro'], ['GBP', 'British Pound'], ['JPY', 'Japanese Yen'], ['AED', 'UAE Dirham'], ['CAD', 'Canadian Dollar'], ['AUD', 'Australian Dollar'], ['CHF', 'Swiss Franc'], ['SGD', 'Singapore Dollar'],
@@ -78,11 +79,11 @@ function App() {
     <aside className={`sidebar ${mobileMenu ? 'sidebar-open' : ''}`}>
       <div className="brand"><div className="brand-icon"><Globe2 size={23} strokeWidth={2.3} /></div><span>Price<span className="brand-dot">.</span></span><button className="mobile-close" onClick={() => setMobileMenu(false)}><X size={20} /></button></div>
       <div className="sidebar-caption">WORKSPACE</div>
-      <nav className="nav"><button className="nav-item active" onClick={() => { switchTab('currencies'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}><LayoutDashboard size={18} /> Overview</button><button className={`nav-item ${tab === 'currencies' ? 'nav-secondary-active' : ''}`} onClick={() => switchTab('currencies')}><ArrowDownUp size={18} /> Currency converter</button><button className={`nav-item ${tab === 'metals' ? 'nav-secondary-active' : ''}`} onClick={() => switchTab('metals')}><Coins size={18} /> Commodities</button></nav>
+      <nav className="nav"><button className={`nav-item ${tab !== 'stocks' ? 'active' : ''}`} onClick={() => { switchTab('currencies'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}><LayoutDashboard size={18} /> Overview</button><button className={`nav-item ${tab === 'currencies' ? 'nav-secondary-active' : ''}`} onClick={() => switchTab('currencies')}><ArrowDownUp size={18} /> Currency converter</button><button className={`nav-item ${tab === 'metals' ? 'nav-secondary-active' : ''}`} onClick={() => switchTab('metals')}><Coins size={18} /> Commodities</button><button className={`nav-item ${tab === 'stocks' ? 'active' : ''}`} onClick={() => switchTab('stocks')}><TrendingUp size={18} /> Stocks <span className="stocks-nav-new">NEW</span></button></nav>
       <div className="sidebar-caption market-caption">MARKET DATA</div>
       <nav className="nav"><a href="https://frankfurter.dev" target="_blank" rel="noreferrer" className="nav-item"><Globe2 size={18} /> FX data source <ExternalLink size={13} className="nav-external" /></a><a href="https://gold-api.com" target="_blank" rel="noreferrer" className="nav-item"><BarChart3 size={18} /> Metals data source <ExternalLink size={13} className="nav-external" /></a></nav>
       <div className="sidebar-bottom"><div className="help-icon"><ShieldCheck size={19} /></div><strong>Clear, transparent rates</strong><p>Real market data, with timestamps and no made-up prices.</p><a href="https://frankfurter.dev" target="_blank" rel="noreferrer">About our sources <ArrowRight size={14} /></a></div>
-      <div className="sidebar-footer"><span className="online-dot" /> Market dashboard <span className="footer-version">v1.0</span></div>
+      <div className="sidebar-footer"><span className="online-dot" /> Market dashboard <span className="footer-version">v2.0</span></div>
     </aside>
     {mobileMenu && <div className="mobile-backdrop" onClick={() => setMobileMenu(false)} />}
     <main className="main">
@@ -96,7 +97,7 @@ function App() {
           <Menu size={21} />
         </button>
         <div className="breadcrumb">
-          Workspace <span>/</span> <strong>Overview</strong>
+          Workspace <span>/</span> <strong>{tab === 'stocks' ? 'Stocks' : 'Overview'}</strong>
         </div>
         <div className="topbar-right">
           <span className="market-indicator">
@@ -116,6 +117,7 @@ function App() {
         </div>
       </header>
       <div className="content">
+        {tab === 'stocks' ? <Stocks theme={theme} /> : <>
         <div className="title-section"><div><div className="eyebrow"><span className="eyebrow-square" /> THE MARKET, MADE SIMPLE</div><h1>Good morning<span className="title-period">.</span></h1><p>Everything you need to convert, compare, and stay on top of rates.</p></div><button className="refresh-button" onClick={() => market.refresh()} disabled={market.loading || market.refreshing}><RefreshCw size={16} className={market.refreshing ? 'spin' : ''} /> {market.refreshing ? 'Refreshing…' : 'Refresh rates'}</button></div>
         <div className="metric-label"><span>MARKET SNAPSHOT</span><span className="data-fresh">{market.lastRefresh ? `Checked ${timeLabel(market.lastRefresh)}` : 'Loading current prices…'}</span></div>
         <div className="metrics">{tiles.map((t, i) => <div className="metric-card" key={i}><div className="metric-top"><div className={`metric-icon ${t.symbol === 'XAU' ? 'gold' : t.symbol === 'XAG' ? 'silver' : 'forex'}`}>{t.symbol === 'XAU' ? <Coins size={18} /> : t.symbol === 'XAG' ? <Sparkles size={18} /> : <span>{icons[t.symbol]}</span>}</div><span className="metric-tag">{t.symbol === 'XAU' || t.symbol === 'XAG' ? 'SPOT' : 'FX'}</span></div><div className="metric-name">{t.alias} <span>{t.symbol}</span></div><div className="metric-value">{tileValue(t) != null ? `₹${formatNumber(tileValue(t), t.unit === 'g' ? 2 : 4)}` : '—'}</div><div className="metric-foot">per {t.unit === 'g' ? 'gram' : `1 ${t.symbol}`} <span className="metric-small">{t.symbol === 'XAU' || t.symbol === 'XAG' ? 'USD spot × FX' : 'Daily reference'}</span></div></div>)}</div>
@@ -142,57 +144,17 @@ function App() {
         )}
         {(market.fxError || market.metalsError.length > 0) && <div className="warning"><CircleHelp size={18} /><span>{market.fxError ? market.fxError + ' ' : ''}{market.metalsError.length ? `Quotes unavailable for: ${market.metalsError.join(', ')}. ` : ''}Other available prices remain usable. Click Refresh rates to retry.</span></div>}
         <section className="bottom-strip"><div className="strip-icon"><ShieldCheck size={22} /></div><div><strong>Know what you're looking at.</strong><p>FX is updated from official reference sources (typically daily). Commodity spot quotes update more frequently. Values are indicative, not executable retail quotes.</p></div><a href="https://frankfurter.dev" target="_blank" rel="noreferrer">Learn more <ArrowRight size={16} /></a></section>
-
-<footer className="main-footer developer-footer">
-  <div className="footer-left">
-    <span>
-      © {new Date().getFullYear()} Price Convert.
-      All rights reserved.
-    </span>
-
-    <span className="footer-credit">
-      Designed & Developed by{" "}
-      <a
-        href="https://garymeledath.com"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Gary Meledath
-      </a>
-      <span className="footer-heart"> ✦</span>
-    </span>
-  </div>
-
-  <div className="footer-links">
-    <a href="mailto:garymeledath234@gmail.com">
-      Email
-    </a>
-
-    <a
-      href="https://garymeledath.com"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Portfolio
-    </a>
-
-    <a
-      href="https://github.com/gary1116"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      GitHub
-    </a>
-
-    <a
-      href="https://www.linkedin.com/in/gary-m-100bb01aa/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      LinkedIn
-    </a>
-  </div>
-</footer>
+        </>}
+        <footer className="main-footer developer-footer">
+          <div className="footer-left">
+            <span>© {new Date().getFullYear()} Price Convert. All rights reserved.</span>
+            <span className="footer-credit">Designed &amp; Developed by <a href="https://garymeledath.com" target="_blank" rel="noopener noreferrer">Gary Meledath</a> <span className="footer-heart">✦</span></span>
+          </div>
+          <div className="footer-links">
+            <a href="mailto:garymeledath234@gmail.com">Email</a>
+            <a href="https://garymeledath.com" target="_blank" rel="noopener noreferrer">Portfolio</a>
+          </div>
+        </footer>
       </div>
     </main>
   </div>;
