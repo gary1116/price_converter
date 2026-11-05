@@ -133,3 +133,348 @@
     padding: 8px;
   }
 }
+
+/* ==================================
+   ATLAS CONVERT — THEME SYSTEM
+   ================================== */
+
+:root {
+  color-scheme: light;
+
+  --theme-bg: #f4f7fb;
+  --theme-card: #ffffff;
+  --theme-text: #1b2638;
+  --theme-muted: #8491a3;
+  --theme-border: #e6ebf1;
+  --theme-input: #f7f9fc;
+  --theme-hover: #eaf5e5;
+  --theme-accent: #4f9946;
+  --theme-grid: #e6ebf1;
+  --theme-shadow: 0 5px 22px #23354c08;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --theme-bg: #111827;
+  --theme-card: #1e293b;
+  --theme-text: #f1f5f9;
+  --theme-muted: #9cabc0;
+  --theme-border: #344256;
+  --theme-input: #263549;
+  --theme-hover: #334b3c;
+  --theme-accent: #a9d977;
+  --theme-grid: #354355;
+  --theme-shadow: 0 5px 22px #00000030;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--theme-border);
+  border-radius: 10px;
+  color: var(--theme-text);
+  background: var(--theme-card);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.theme-toggle:hover {
+  background: var(--theme-hover);
+}
+
+/* Historical chart from our previous enhancement */
+
+.history-panel {
+  background: var(--theme-card);
+  border-color: var(--theme-border);
+  box-shadow: var(--theme-shadow);
+}
+
+.history-header h2,
+.history-summary strong {
+  color: var(--theme-text);
+}
+
+.history-header p,
+.history-source {
+  color: var(--theme-muted);
+}
+
+.history-periods {
+  background: var(--theme-input);
+}
+
+.history-periods button {
+  color: var(--theme-muted);
+}
+
+.history-periods button.active {
+  background: var(--theme-hover);
+  color: var(--theme-accent);
+}
+
+/* Shared theme utility classes */
+
+.theme-card {
+  background: var(--theme-card);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-border);
+  box-shadow: var(--theme-shadow);
+}
+
+.theme-input {
+  background: var(--theme-input);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-border);
+}
+
+/* Smooth switching */
+
+body,
+.theme-card,
+.theme-input,
+.theme-toggle,
+.history-panel {
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .theme-card,
+  .theme-input,
+  .theme-toggle,
+  .history-panel {
+    transition: none;
+  }
+}
+
+
+/* ============================================================
+   COMPLETE THEME INTEGRATION
+   Uses the data-theme attribute set by src/hooks/useTheme.js.
+   Original dashboard styling and layout above are preserved.
+   ============================================================ */
+
+/* The base stylesheet uses fixed light colors; override those
+   selectively so its original light appearance is unchanged. */
+[data-theme="dark"] {
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+[data-theme="dark"] .app-shell,
+[data-theme="dark"] .main,
+[data-theme="dark"] .content {
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+[data-theme="dark"] .topbar,
+[data-theme="dark"] .metric-card,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .history-panel {
+  background: var(--theme-card);
+  border-color: var(--theme-border);
+  color: var(--theme-text);
+  box-shadow: var(--theme-shadow);
+}
+[data-theme="dark"] .topbar { box-shadow: none; }
+[data-theme="dark"] .breadcrumb,
+[data-theme="dark"] .metric-label,
+[data-theme="dark"] .data-fresh,
+[data-theme="dark"] .market-indicator,
+[data-theme="dark"] .panel-heading p,
+[data-theme="dark"] .title-section p,
+[data-theme="dark"] .history-header p,
+[data-theme="dark"] .history-source,
+[data-theme="dark"] .history-message,
+[data-theme="dark"] .metric-foot,
+[data-theme="dark"] .metric-name span,
+[data-theme="dark"] .metric-small,
+[data-theme="dark"] .asset-name small,
+[data-theme="dark"] .asset-quote small,
+[data-theme="dark"] .field-label,
+[data-theme="dark"] .converter-note,
+[data-theme="dark"] .destination-help,
+[data-theme="dark"] .select-full,
+[data-theme="dark"] .option-name,
+[data-theme="dark"] .main-footer,
+[data-theme="dark"] .watch-footer,
+[data-theme="dark"] .table-head,
+[data-theme="dark"] .result-caption,
+[data-theme="dark"] .result-bottom span,
+[data-theme="dark"] .result-number span,
+[data-theme="dark"] .history-summary small {
+  color: var(--theme-muted);
+}
+[data-theme="dark"] .breadcrumb span { color: var(--theme-muted); }
+[data-theme="dark"] .breadcrumb strong,
+[data-theme="dark"] .title-section h1,
+[data-theme="dark"] .metric-name,
+[data-theme="dark"] .metric-value,
+[data-theme="dark"] .panel-heading h2,
+[data-theme="dark"] .asset-name strong,
+[data-theme="dark"] .asset-quote strong,
+[data-theme="dark"] .history-header h2,
+[data-theme="dark"] .history-summary strong {
+  color: var(--theme-text);
+}
+[data-theme="dark"] .metric-tag,
+[data-theme="dark"] .panel-heading-icon {
+  border-color: var(--theme-border);
+  color: var(--theme-muted);
+}
+[data-theme="dark"] .metric-icon.gold,
+[data-theme="dark"] .asset-icon.metal-icon.gold { background: #493b28; color: #f4c768; }
+[data-theme="dark"] .metric-icon.silver,
+[data-theme="dark"] .asset-icon.metal-icon.silver { background: #334156; color: #cbd5e1; }
+[data-theme="dark"] .metric-icon.forex,
+[data-theme="dark"] .asset-icon { background: #30493e; color: #b9e8ba; }
+[data-theme="dark"] .asset-icon.metal-icon.purple { background: #403452; color: #c7b5f2; }
+[data-theme="dark"] .asset-icon.metal-icon.blue { background: #2a405c; color: #a6c8ff; }
+[data-theme="dark"] .asset-icon.metal-icon.copper { background: #503a31; color: #ebad8c; }
+
+/* Buttons, segmented tabs and period selector */
+[data-theme="dark"] .refresh-button,
+[data-theme="dark"] .switch-divider button,
+[data-theme="dark"] .theme-toggle {
+  background: var(--theme-card);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+[data-theme="dark"] .refresh-button:hover,
+[data-theme="dark"] .theme-toggle:hover { background: var(--theme-input); }
+[data-theme="dark"] .tabs,
+[data-theme="dark"] .history-periods { background: var(--theme-input); }
+[data-theme="dark"] .tabs button,
+[data-theme="dark"] .history-periods button,
+[data-theme="dark"] .watchlist-tabs button { color: var(--theme-muted); }
+[data-theme="dark"] .tabs button.selected,
+[data-theme="dark"] .history-periods button.active {
+  background: #344b3c;
+  color: #c3ed98;
+  box-shadow: none;
+}
+[data-theme="dark"] .watchlist-tabs button.watch-active {
+  color: #c3ed98;
+  border-bottom-color: var(--theme-accent);
+  background: transparent;
+}
+[data-theme="dark"] .metal-pills button {
+  background: var(--theme-input);
+  color: var(--theme-muted);
+  border-color: var(--theme-border);
+}
+[data-theme="dark"] .metal-pills button.on {
+  background: #344b3c;
+  color: #c3ed98;
+  border-color: #4f7756;
+}
+
+/* All converter controls (including dropdown popup and its input) */
+[data-theme="dark"] .amount-field,
+[data-theme="dark"] .destination-field,
+[data-theme="dark"] .select-trigger,
+[data-theme="dark"] .unit-select,
+[data-theme="dark"] .watch-search,
+[data-theme="dark"] .searchbox {
+  background: var(--theme-input);
+  border-color: var(--theme-border);
+  color: var(--theme-text);
+}
+[data-theme="dark"] .destination-field .select-trigger {
+  background: transparent;
+  border-color: transparent;
+}
+[data-theme="dark"] .amount-field input,
+[data-theme="dark"] .watch-search input,
+[data-theme="dark"] .searchbox input,
+[data-theme="dark"] .unit-select {
+  color: var(--theme-text);
+}
+[data-theme="dark"] input::placeholder { color: var(--theme-muted); }
+[data-theme="dark"] .amount-prefix,
+[data-theme="dark"] .subtle { color: var(--theme-muted); }
+[data-theme="dark"] .switch-divider > div { background: var(--theme-border); }
+[data-theme="dark"] .select-popover {
+  background: var(--theme-card);
+  border-color: var(--theme-border);
+  color: var(--theme-text);
+}
+[data-theme="dark"] .select-option { color: var(--theme-text); }
+[data-theme="dark"] .select-option:hover,
+[data-theme="dark"] .select-option.chosen { background: var(--theme-hover); }
+[data-theme="dark"] .empty-results { color: var(--theme-muted); }
+[data-theme="dark"] select option {
+  background: var(--theme-card);
+  color: var(--theme-text);
+}
+
+/* Green conversion result panel */
+[data-theme="dark"] .result-card {
+  background: #233b32;
+  border-color: #385949;
+}
+[data-theme="dark"] .result-number { color: #e6f6e6; }
+[data-theme="dark"] .result-description { color: #b3d5b4; }
+[data-theme="dark"] .result-bottom { border-top-color: #385949; }
+[data-theme="dark"] .result-bottom button { color: #c3ed98; }
+
+/* Watchlist and information strip */
+[data-theme="dark"] .watchlist-tabs,
+[data-theme="dark"] .table-head,
+[data-theme="dark"] .market-row { border-color: var(--theme-border); }
+[data-theme="dark"] .watch-footer a,
+[data-theme="dark"] .bottom-strip a { color: var(--theme-accent); }
+[data-theme="dark"] .bottom-strip {
+  background: #1c3029;
+  border-color: #385646;
+}
+[data-theme="dark"] .bottom-strip strong { color: #e3f3e0; }
+[data-theme="dark"] .bottom-strip p { color: #b0c5b4; }
+[data-theme="dark"] .strip-icon { background: #314c39; color: #b5eb91; }
+[data-theme="dark"] .warning {
+  background: #453624;
+  border-color: #705338;
+  color: #f5cf9b;
+}
+
+/* The sidebar already has a suitable dark palette in both themes. */
+/* Keep mobile navigation comfortable when a long theme label is present. */
+@media (max-width: 700px) {
+  .theme-toggle { padding: 9px 10px; gap: 5px; font-size: 11px; }
+  .topbar-right { gap: 9px; }
+}
+@media (max-width: 390px) {
+  .theme-toggle { padding: 9px; }
+  .theme-toggle span:last-child { display: none; }
+}
+
+/* In reduced-motion mode, suppress theme transitions. */
+@media (prefers-reduced-motion: reduce) {
+  .topbar, .metric-card, .panel, .amount-field, .destination-field,
+  .result-card, .bottom-strip, .refresh-button, .select-trigger { transition: none; }
+}

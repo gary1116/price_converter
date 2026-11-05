@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowDownUp, ArrowRight, BarChart3, Check, ChevronDown, CircleHelp, Coins, Command, ExternalLink, Globe2, LayoutDashboard, Menu, RefreshCw, Search, ShieldCheck, Sparkles, TrendingUp, Wallet, X } from 'lucide-react';
 import { FX_API, METALS, POPULAR, TROY_OUNCE_GRAMS, currencySymbol, formatNumber, getCurrencies, getMetalPrices, getUsdRates, metalValueUsd, timeLabel } from './api';
 import HistoricalChart from "./components/HistoricalChart";
+import useTheme from "./hooks/useTheme";
 
 const defaultCurrencyOptions = [
   ['USD', 'US Dollar'], ['INR', 'Indian Rupee'], ['EUR', 'Euro'], ['GBP', 'British Pound'], ['JPY', 'Japanese Yen'], ['AED', 'UAE Dirham'], ['CAD', 'Canadian Dollar'], ['AUD', 'Australian Dollar'], ['CHF', 'Swiss Franc'], ['SGD', 'Singapore Dollar'],
@@ -45,6 +46,7 @@ function RateSelect({ value, onChange, options, compact = false }) {
 
 function App() {
   const market = useMarketData();
+  const { theme, toggleTheme } = useTheme();
   const [tab, setTab] = useState('currencies');
   const [amount, setAmount] = useState('1000');
   const [from, setFrom] = useState('USD');
@@ -84,7 +86,35 @@ function App() {
     </aside>
     {mobileMenu && <div className="mobile-backdrop" onClick={() => setMobileMenu(false)} />}
     <main className="main">
-      <header className="topbar"><button className="hamburger" onClick={() => setMobileMenu(true)}><Menu size={21} /></button><div className="breadcrumb">Workspace <span>/</span> <strong>Overview</strong></div><div className="topbar-right"><span className="market-indicator"><span className="online-dot" /> Market data connected</span></div></header>
+      <header className="topbar">
+        <button
+          type="button"
+          className="hamburger"
+          onClick={() => setMobileMenu(true)}
+          aria-label="Open navigation menu"
+        >
+          <Menu size={21} />
+        </button>
+        <div className="breadcrumb">
+          Workspace <span>/</span> <strong>Overview</strong>
+        </div>
+        <div className="topbar-right">
+          <span className="market-indicator">
+            <span className="online-dot" /> Market data connected
+          </span>
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            aria-pressed={theme === 'dark'}
+          >
+            <span aria-hidden="true">{theme === 'dark' ? '☀️' : '🌙'}</span>
+            <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+          </button>
+        </div>
+      </header>
       <div className="content">
         <div className="title-section"><div><div className="eyebrow"><span className="eyebrow-square" /> THE MARKET, MADE SIMPLE</div><h1>Good morning<span className="title-period">.</span></h1><p>Everything you need to convert, compare, and stay on top of rates.</p></div><button className="refresh-button" onClick={() => market.refresh()} disabled={market.loading || market.refreshing}><RefreshCw size={16} className={market.refreshing ? 'spin' : ''} /> {market.refreshing ? 'Refreshing…' : 'Refresh rates'}</button></div>
         <div className="metric-label"><span>MARKET SNAPSHOT</span><span className="data-fresh">{market.lastRefresh ? `Checked ${timeLabel(market.lastRefresh)}` : 'Loading current prices…'}</span></div>
@@ -107,6 +137,7 @@ function App() {
           <HistoricalChart
             from={from}
             to={to}
+            theme={theme}
           />
         )}
         {(market.fxError || market.metalsError.length > 0) && <div className="warning"><CircleHelp size={18} /><span>{market.fxError ? market.fxError + ' ' : ''}{market.metalsError.length ? `Quotes unavailable for: ${market.metalsError.join(', ')}. ` : ''}Other available prices remain usable. Click Refresh rates to retry.</span></div>}
